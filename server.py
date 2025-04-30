@@ -5,10 +5,15 @@
 from flask import Flask, render_template, request
 from SentimentAnalysis.sentiment_analysis import sentiment_analyzer
 
+
 app = Flask("Sentiment Analyzer")
+
 
 @app.route("/sentimentAnalyzer")
 def sent_analyzer():
+    '''
+    Retrieve the text to analyze, and return the corresponding label and score if entry is valid
+    '''
     # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
 
@@ -19,16 +24,17 @@ def sent_analyzer():
     label = response['label']
     score = response['score']
 
-    # Return a formatted string with the sentiment label and score
-    return "The given text has been identified as {} with a score of {}.".format(label.split('_')[1], score)
+    if label is None:
+        return "Invalid input! Try again."
+    return f"The given text is {label.split('_')[1]} with a score of {score}."
 
 @app.route("/")
 def render_index_page():
+    '''
+    Render html file
+    '''
     return render_template('index.html')
 
 
 if __name__ == "__main__":
-    ''' This functions executes the flask app and deploys it on localhost:5000
-    '''
-    
     app.run(host="0.0.0.0", port=5000)
